@@ -19,7 +19,7 @@ This program is a application that allows you to create simple notes. Instead of
 4) Type `npm start`
 5) In web browser address bar type `http://localhost:3001` to open application
 6) The app will continue to run in `localhost`, but if you need to stop it, in the same integrated terminal use `CTRL + C` to close it
-7) Follow `steps 2, 4-6` to open it back up
+7) Follow `steps 2, 4, & 5` to open it back up
 
 Here is a video link for visual instructions you can follow: !(Installation Walkthrough)[]
 
