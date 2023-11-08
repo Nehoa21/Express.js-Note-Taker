@@ -11,17 +11,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
-// route to index.html
+// GET route to index.html
 app.get('*', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
-// route to notes.html
+// GET route to notes.html
 app.get('/notes', (req, res) => 
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-
+// GET route to show notes given to db.json file
 app.get('/api/notes', (req, res) => 
     fs.readFile('db/db.json', 'utf-8', (err, data) => {
         const notesJson = JSON.parse(data);
@@ -29,6 +29,7 @@ app.get('/api/notes', (req, res) =>
     })
 );
 
+// POST route to add new note to db.json file received from user input
 app.post('/api/notes', (req, res) => {
     const { title, text } = req.body;
 
@@ -45,21 +46,16 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-
-app.delete('/:id', (req, res) => {
-    const noteId = req.params.id;
-    readFromFile('./db/tips.json')
+// DELETE route, reads note from db.json file to be deleted, deletes, rewrites updated db.json file
+app.delete('/api/notes/:id', (req, res) => {
+    const id = req.params.id;
+    readFromFile('./db/db.json')
       .then((data) => JSON.parse(data))
       .then((json) => {
-        // Make a new array of all tips except the one with the ID provided in the URL
-        const result = json.filter((tip) => tip.tip_id !== tipId);
-  
-        // Save that array to the filesystem
-        writeToFile('./db/tips.json', result);
-  
-        // Respond to the DELETE request
-        res.json(`Item ${tipId} has been deleted 🗑️`);
+        const result = json.filter((note) => note.id !== id);
+        writeToFile('./db/db.json', result);
+        res.json(`Deleted note ${id}.`);
       });
-  });
+});
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));
