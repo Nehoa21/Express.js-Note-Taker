@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const { readFromFile, writeToFile, readAndAppend } = require('./utils');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -28,18 +29,6 @@ app.get('/api/notes', (req, res) =>
     })
 );
 
-const readAndAppend = (content, file) => {
-    fs.readFile(file, 'utf8', (err, data) => {
-      if (err) {
-        console.error(err);
-      } else {
-        const parsedData = JSON.parse(data);
-        parsedData.push(content);
-        writeToFile(file, parsedData);
-      }
-    });
-  };
-
 app.post('/api/notes', (req, res) => {
     const { title, text } = req.body;
 
@@ -47,6 +36,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
+            id: uuidv4()
         };
         readAndAppend(newNote, 'db/db.json');
         res.json('Note added!')
@@ -56,6 +46,20 @@ app.post('/api/notes', (req, res) => {
 });
 
 
-
+app.delete('/:id', (req, res) => {
+    const noteId = req.params.id;
+    readFromFile('./db/tips.json')
+      .then((data) => JSON.parse(data))
+      .then((json) => {
+        // Make a new array of all tips except the one with the ID provided in the URL
+        const result = json.filter((tip) => tip.tip_id !== tipId);
+  
+        // Save that array to the filesystem
+        writeToFile('./db/tips.json', result);
+  
+        // Respond to the DELETE request
+        res.json(`Item ${tipId} has been deleted 🗑️`);
+      });
+  });
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}!`));
