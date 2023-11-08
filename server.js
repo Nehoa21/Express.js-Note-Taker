@@ -1,10 +1,12 @@
+// require 
 const express = require('express');
 const path = require('path');
-const { readFromFile, writeToFile, readAndAppend } = require('./utils');
+const { readFromFile, writeToFile, readAndAppend } = require('./utils.js');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const app = express();
+
 const PORT = process.env.PORT || 3001;
+const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -12,19 +14,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // GET route to index.html
-app.get('*', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/index.html'))
+app.get('/', (req, res) => 
+    res.sendFile(path.join(__dirname, 'public/index.html'))
 );
 
 // GET route to notes.html
 app.get('/notes', (req, res) => 
-    res.sendFile(path.join(__dirname, '/public/notes.html'))
+    res.sendFile(path.join(__dirname, 'public/notes.html'))
 );
 
 // GET route to show notes given to db.json file
 app.get('/api/notes', (req, res) => 
     fs.readFile('db/db.json', 'utf-8', (err, data) => {
         const notesJson = JSON.parse(data);
+        console.log(notesJson);
         res.json(notesJson);
     })
 );
@@ -35,8 +38,8 @@ app.post('/api/notes', (req, res) => {
 
     if (req.body) {
         const newNote = {
-            title,
-            text,
+            title: title,
+            text: text,
             id: uuidv4()
         };
         readAndAppend(newNote, 'db/db.json');
@@ -53,7 +56,7 @@ app.delete('/api/notes/:id', (req, res) => {
       .then((data) => JSON.parse(data))
       .then((json) => {
         const result = json.filter((note) => note.id !== id);
-        writeToFile('./db/db.json', result);
+        writeToFile('db/db.json', result);
         res.json(`Deleted note ${id}.`);
       });
 });
