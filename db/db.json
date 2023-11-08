@@ -1,1 +1,12 @@
-[]
+[
+    {
+        "title": "Grocery Shopping",
+        "text": "Saturday @ 10 AM",
+        "id": "5adc64c1-c3a1-46cd-9e77-2b19ef5a8e29"
+    },
+    {
+        "title": "Walk the dog",
+        "text": "Tomorrow @ 7 AM",
+        "id": "cc29d2c4-ccea-4607-8354-91559a10e12a"
+    }
+]
